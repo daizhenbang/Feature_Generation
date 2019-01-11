@@ -2,7 +2,6 @@ import numpy as np
 import math as ma
 import itertools
 import cmath
-import os
 
 
 def in_coord(name, lattice, original_pb, original_cl, original_c, original_n, original_h): #Lattice is given since it's 'relax' calculation

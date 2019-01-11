@@ -233,6 +233,8 @@ def findNN(name):
     
     return NN,original_n;
 
+def dipoleCoupling(allDipoles):
+
 if __name__ == '__main__':
     dft = np.zeros((200,1));
     dftFile = open('dft.txt','r');
@@ -259,6 +261,8 @@ if __name__ == '__main__':
 #    flattenNN = NN.flatten();
 #    plt.scatter(dft,aveNN);
 #    plt.hist(aveNN,30)
+    
+    
     name = 'rand_' + str(52) +'.xsf';
     orgo,inorgo = findChargeCenter(name);
     NN, originalN = findNN(name);
