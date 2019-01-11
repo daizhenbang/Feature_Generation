@@ -234,6 +234,15 @@ def findNN(name):
     return NN,original_n;
 
 def dipoleCoupling(allDipoles):
+    numDipoles = len(allDipoles[:,0]);#The dipoles are stored as nx3
+    coupling = 0;
+    for i in range(numDipoles):
+        tempNeigh = np.zeros((4,2));
+        op.gothrough(allDipoles[0,:],allDipoles,tempNeigh);
+        for j in range(3):
+            coupling += np.dot(allDipoles[0,:],allDipoles[int(tempNeigh[j,0])]);
+        
+    return coupling/24;
 
 if __name__ == '__main__':
     dft = np.zeros((200,1));
@@ -251,10 +260,17 @@ if __name__ == '__main__':
     lattice[2][2] = 11.3552;
     NN = np.zeros((200,24));
     aveNN = np.zeros((200,1));
-#    for i in range(200):
-#        name = 'rand_' + str(i+51) +'.xsf';
+    orgo = np.zeros((200,8,3));
+    inorgo = np.zeros((200,8,3));
+    dipoleOI = np.zeros((200,8,3))
+    
+    for i in range(200):
+        name = 'rand_' + str(i+51) +'.xsf';
 #        NN[i,:],orignal_N = findNN(name);
 #        aveNN[i] = np.mean(NN[i,:]);
+        orgo[i], inorgo[i] =  findChargeCenter(name);
+        dipoleOI[i] = orgo[i] - inorgo[i];
+        print(dipoleCoupling(dipoleOI[i]));
     
 #    flattenNN = np.zeros((200,24));
 #    flattenNN = NN;
@@ -262,11 +278,3 @@ if __name__ == '__main__':
 #    plt.scatter(dft,aveNN);
 #    plt.hist(aveNN,30)
     
-    
-    name = 'rand_' + str(52) +'.xsf';
-    orgo,inorgo = findChargeCenter(name);
-    NN, originalN = findNN(name);
-#    print(findNeighbor(orgo,lattice));
-    print(orgo)
-    print(inorgo)
-    print(originalN)
