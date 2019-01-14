@@ -282,7 +282,13 @@ if __name__ == '__main__':
     
     highSym = np.zeros((8,3));
     count = 0;
-    
+    for i in range(2):
+        for j in range(2):
+            for k in range(2):
+                highSym[count,0] = lattice[0,0]/2*i;
+                highSym[count,1] = lattice[1,1]/2*j;
+                highSym[count,2] = lattice[2,2]/2*k;
+                count += 1;
     
     NN = np.zeros((200,24));
     aveNN = np.zeros((200,1));
@@ -290,7 +296,7 @@ if __name__ == '__main__':
     inorgo = np.zeros((200,8,3));
     dipoleOI = np.zeros((200,8,3));
     dipoleNI = np.zeros((288,8,3));
-    dipoleNHighSymCouple = np.zeros((200,8,3));
+    dipoleNHighSym = np.zeros((200,8,3));
     molecules = np.zeros((200,8,3));
     
     
@@ -306,7 +312,7 @@ if __name__ == '__main__':
         for j in range(8):
             tempHighSym = np.zeros((3,2));
             op.gothrough(original_N[j,:],highSym,tempHighSym);
-            dipoleNHighSymCouple[i,j,:] = original_N - highSym[int(tempHighSym[0,0])];
+            dipoleNHighSym[i,j,:] = original_N[j,:] - highSym[int(tempHighSym[0,0])];
         
 #        aveNN[i] = np.mean(NN[i,:]);
 #        orgo[i], inorgo[i] =  findChargeCenter(name);
@@ -315,9 +321,10 @@ if __name__ == '__main__':
 #        dipoleOI[i] = orgo[i] - inorgo[i];
 #        OIcouple[i] = dipoleCoupling(dipoleOI[i]);
         moleCouple[i] = dipoleCoupling(molecules[i]);
+        NHighSymCouple[i] = dipoleCoupling(dipoleNHighSym[i]);
 #        NIcouple[i] = dipoleCoupling(dipoleNI[i]);
         
-        print(NIcouple[i,0])
+        print(NHighSymCouple[i,0])
     
 #    flattenNN = np.zeros((200,24));
 #    flattenNN = NN;
