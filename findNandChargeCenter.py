@@ -240,10 +240,31 @@ def dipoleCoupling(allDipoles):
         tempNeigh = np.zeros((4,2));
         op.gothrough(allDipoles[0,:],allDipoles,tempNeigh);
         for j in range(3):
-            coupling += np.dot(allDipoles[0,:],allDipoles[int(tempNeigh[j,0])]);
+            coupling += np.dot(allDipoles[0,:],allDipoles[int(tempNeigh[j+1,0])]);
         
     return coupling/24;
 
+
+def findMolecules(name):
+   #import the coordinates
+    lattice = np.zeros((3,3));
+    original_pb = np.zeros((8,3));
+    original_cl = np.zeros((24,3));
+    original_c = np.zeros((8,3));
+    original_n = np.zeros((8,3));
+    original_h = np.zeros((48,3));
+
+    op.in_coord(name, lattice, original_pb, original_cl, original_c, original_n, original_h);
+    
+    molecules = np.zeros((8,3));
+    for i in range(8):
+        tempN = np.zeros((3,2));
+        op.gothrough(original_c[i,:],original_n,tempN);
+        molecules[i] = original_n[int(tempN[0,0]),:] - original_c[i,:];
+    
+    return molecules;
+    
+    
 if __name__ == '__main__':
     dft = np.zeros((200,1));
     dftFile = open('dft.txt','r');
@@ -258,19 +279,45 @@ if __name__ == '__main__':
     lattice[0][0] = 11.2820;
     lattice[1][1] = 11.1747;
     lattice[2][2] = 11.3552;
+    
+    highSym = np.zeros((8,3));
+    count = 0;
+    
+    
     NN = np.zeros((200,24));
     aveNN = np.zeros((200,1));
     orgo = np.zeros((200,8,3));
     inorgo = np.zeros((200,8,3));
-    dipoleOI = np.zeros((200,8,3))
+    dipoleOI = np.zeros((200,8,3));
+    dipoleNI = np.zeros((288,8,3));
+    dipoleNHighSymCouple = np.zeros((200,8,3));
+    molecules = np.zeros((200,8,3));
+    
+    
+    OIcouple = np.zeros((200,1));
+    moleCouple = np.zeros((200,1));
+    NIcouple = np.zeros((200,1));
+    NHighSymCouple = np.zeros((200,1));
     
     for i in range(200):
         name = 'rand_' + str(i+51) +'.xsf';
-#        NN[i,:],orignal_N = findNN(name);
+        NN[i,:],original_N = findNN(name);
+        #Find the nearest high symmetry position
+        for j in range(8):
+            tempHighSym = np.zeros((3,2));
+            op.gothrough(original_N[j,:],highSym,tempHighSym);
+            dipoleNHighSymCouple[i,j,:] = original_N - highSym[int(tempHighSym[0,0])];
+        
 #        aveNN[i] = np.mean(NN[i,:]);
-        orgo[i], inorgo[i] =  findChargeCenter(name);
-        dipoleOI[i] = orgo[i] - inorgo[i];
-        print(dipoleCoupling(dipoleOI[i]));
+#        orgo[i], inorgo[i] =  findChargeCenter(name);
+        molecules[i] = findMolecules(name);
+#        dipoleNI[i] = orignal_N - inorgo[i];
+#        dipoleOI[i] = orgo[i] - inorgo[i];
+#        OIcouple[i] = dipoleCoupling(dipoleOI[i]);
+        moleCouple[i] = dipoleCoupling(molecules[i]);
+#        NIcouple[i] = dipoleCoupling(dipoleNI[i]);
+        
+        print(NIcouple[i,0])
     
 #    flattenNN = np.zeros((200,24));
 #    flattenNN = NN;
