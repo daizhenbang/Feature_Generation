@@ -241,7 +241,7 @@ def dipoleCoupling(allDipoles):
         op.gothrough(allDipoles[0,:],allDipoles,tempNeigh);
         for j in range(3):
             coupling += np.dot(allDipoles[0,:],allDipoles[int(tempNeigh[j+1,0])]);
-        
+    
     return coupling/24;
 
 
@@ -324,7 +324,7 @@ if __name__ == '__main__':
         NHighSymCouple[i] = dipoleCoupling(dipoleNHighSym[i]);
 #        NIcouple[i] = dipoleCoupling(dipoleNI[i]);
         
-        print(NHighSymCouple[i,0])
+        print(moleCouple[i,0])
     
 #    flattenNN = np.zeros((200,24));
 #    flattenNN = NN;
