@@ -40,14 +40,17 @@ def findNeighbor(coords,lattice):
             count += 1;
             nnVec = original_n[int(tempN[j+1,0]),:] - original_n[i,:];
             axis[j] = determineAxis(nnVec);
+           
             if axis[j] > 0:
                 anotherN = original_n[int(tempN[j+1,0]),:] - lattice[int(axis[j]-1),:];
                 tempNN[count] = np.linalg.norm(anotherN - original_n[i,:]);
+#                print(tempNN[count])
                 count += 1;
             else:
                 anotherN = original_n[int(tempN[j+1,0]),:] + lattice[-int(axis[j]+1),:];
                 tempNN[count] = np.linalg.norm(anotherN - original_n[i,:]);
                 count += 1;
+            
     
     '''Remove Double Counting'''
     count = 0;
@@ -55,18 +58,19 @@ def findNeighbor(coords,lattice):
     for i in range(48):
         count2 = 0;
         for j in range(count):
-            if tempNN[i] == NN[j]:
+            if abs(tempNN[i] - NN[j])<0.00000000001:
                 count2 += 1;
                 break;
         
         if count2 == 0:
             NN[count] = tempNN[i];
             count += 1;
-            if count == 24:
+            print(count)
+            if count == 6:
                 break;
         else:
             continue;
-    
+        
     return NN;
 
 def findChargeCenter(name):
@@ -262,19 +266,44 @@ if __name__ == '__main__':
     aveNN = np.zeros((200,1));
     orgo = np.zeros((200,8,3));
     inorgo = np.zeros((200,8,3));
-    dipoleOI = np.zeros((200,8,3))
+    dipoleOI = np.zeros((200,8,3));
+    dipoleNI = np.zeros((200,8,3));
+    
+    OIcoupling = np.zeros((200,1));
+    NIcoupling = np.zeros((200,1));
+    moleCoupling = np.zeros((200,1));
+    
+    II = np.zeros((200,6));
+    OO = np.zeros((200,24));
     
     for i in range(200):
         name = 'rand_' + str(i+51) +'.xsf';
 #        NN[i,:],orignal_N = findNN(name);
-#        aveNN[i] = np.mean(NN[i,:]);
+        aveNN[i] = np.mean(NN[i,:]);
         orgo[i], inorgo[i] =  findChargeCenter(name);
-        dipoleOI[i] = orgo[i] - inorgo[i];
-        print(dipoleCoupling(dipoleOI[i]));
+#        dipoleOI[i] = orgo[i] - inorgo[i];
+#        dipoleNI[i] = orignal_N - inorgo[i];
+        II[i,:] = findNeighbor(inorgo[i],lattice);
+#        OO[i,:] = findNeighbor(orgo[i],lattice);
+        
+
+    flattenNN = np.zeros((200,24));
+    flattenNN = NN;
+    flattenNN = NN.flatten();
     
-#    flattenNN = np.zeros((200,24));
-#    flattenNN = NN;
-#    flattenNN = NN.flatten();
+    flattenII = np.zeros((200,6));
+    flattenII = II;
+    flattenII = II.flatten();
+    
+    flattenOO = np.zeros((200,24));
+    flattenOO = OO;
+    flattenOO = OO.flatten();
+    
 #    plt.scatter(dft,aveNN);
-#    plt.hist(aveNN,30)
+    
+    fig = plt.figure(1,figsize=(10,8))
+    plt.hist(flattenII,1000)
+    alpha = np.std(flattenII)/np.ptp(flattenII);
+    plt.title('All I-I Distance per Structure\n %.4f' %alpha,fontsize=20);
+    fig.savefig('allII.png',dpi=200)
     

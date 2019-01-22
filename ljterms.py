@@ -109,7 +109,6 @@ def findNHBond(name):
 
 
     #After spliting into small cell, let's calculate the hydrogen bonds length.
-    #Every Hydrogen atom keep its first two shortest distances between Cl
     the_nh = np.zeros((8,3,3));
     the_ch = np.zeros((8,3,3));
     for i in range(8):
@@ -120,23 +119,34 @@ def findNHBond(name):
         for j in range(3):
             the_nh[i][j] = h[int(temp_h_n[j][0])];
             the_ch[i][j] = h[int(temp_h_c[j][0])];
+            
+            
 
-    #3rd method
-    r0 = 2.2;
-    B = 0.3;
-    numHBond = np.zeros((8,1));
+    #Now starting to calculate the LJ terms
+    #For all Cl atoms in one small cell
+    HCl_6LJ = np.zeros((8,1));
+    HCl_12LJ = np.zeros((8,1));
+    
+    NCl_6LJ = np.zeros((8,1));
+    NCl_12LJ = np.zeros((8,1));
+    
     for i in range(8):
+        for j in range(12):
+            dij_NCl = np.linalg.norm(the_n[i] - the_cl[i,j]);
+            NCl_6LJ[i,0] += count6LJ(dij_NCl);
+            NCl_12LJ[i,0] += count12LJ(dij_NCl);
+        
         for j in range(3):
             for k in range(12):
                 dij = np.linalg.norm(the_nh[i][j] - the_cl[i][k]);
-                numHBond[i,0] += countFD(r0,B,dij);
-    #print(numHBond)
-    aveBond = np.sum(numHBond)/24;
-    return aveBond;
+                HCl_6LJ[i,0] += count6LJ(dij);
+                HCl_12LJ[i,0] += count12LJ(dij);
+                
+    return np.sum(HCl_6LJ), np.sum(HCl_12LJ), np.sum(NCl_6LJ), np.sum(NCl_12LJ);
 
 #Start of the main function
-aveBond = np.zeros((200,1));
+LJ_terms = np.zeros((200,4)); #6HCl, 12HCl, 6LJ, 12LJ
 for i in range(200):
     name = 'rand_' + str(i+51) + '.xsf';
-    aveBond[i,0] = findNHBond(name);
-    print(aveBond[i,0])
+    LJ_terms[i,:] = findNHBond(name);
+    print(LJ_terms[i,:])
