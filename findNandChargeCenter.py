@@ -324,10 +324,10 @@ if __name__ == '__main__':
         
         d2[i] = np.square(np.linalg.norm(dipoleNHighSym[i],axis=1));
 #        d2[i] = np.square(np.linalg.norm(molecules[i],axis=1));
-#        d4[i] = np.square(d2[i]);
+        d4[i] = np.sum(np.power(dipoleNHighSym[i],4),axis=1);
         
-        for j in range(8):
-            d2[i,j] = molecules[i,j,0]**2 + molecules[i,j,1]**2 + molecules[i,j,2]**2;
+#        for j in range(8):
+#            d2[i,j] = molecules[i,j,0]**2 + molecules[i,j,1]**2 + molecules[i,j,2]**2;
 #            d4[i,j] = molecules[i,j,0]**4 + molecules[i,j,1]**4 + molecules[i,j,2]**4;
         
         
