@@ -313,6 +313,9 @@ if __name__ == '__main__':
     for i in range(200):
         name = 'rand_' + str(i+51) +'.xsf';
         NN[i,:],original_N = findNN(name);
+        molecules[i] = findMolecules(name);
+        
+        
         #Find the nearest high symmetry position
         for j in range(8):
             tempHighSym = np.zeros((3,2));
@@ -320,9 +323,16 @@ if __name__ == '__main__':
             dipoleNHighSym[i,j,:] = original_N[j,:] - highSym[int(tempHighSym[0,0])];
         
         d2[i] = np.square(np.linalg.norm(dipoleNHighSym[i],axis=1));
-        d4[i] = np.square(d2[i]);
+#        d2[i] = np.square(np.linalg.norm(molecules[i],axis=1));
+#        d4[i] = np.square(d2[i]);
         
-        print(np.sum(d4[i]));
+        for j in range(8):
+            d2[i,j] = molecules[i,j,0]**2 + molecules[i,j,1]**2 + molecules[i,j,2]**2;
+#            d4[i,j] = molecules[i,j,0]**4 + molecules[i,j,1]**4 + molecules[i,j,2]**4;
+        
+        
+        print(np.sum(d2[i]));
+#        print(molecules)
 
     
 #        aveNN[i] = np.mean(NN[i,:]);
