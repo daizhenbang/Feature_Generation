@@ -13,7 +13,7 @@ def count6LJ(dij):
     return 1/(dij**6);
 
 def count12LJ(dij):
-    return 1/(dij**6);
+    return 1/(dij**12);
 
 
 def findNHBond(name):
@@ -130,6 +130,19 @@ def findNHBond(name):
     NCl_6LJ = np.zeros((8,1));
     NCl_12LJ = np.zeros((8,1));
     
+#    for i in range(8):
+#        for j in range(12):
+#            dij_NCl = np.linalg.norm(the_n[i] - the_cl[i,j]);
+#            NCl_6LJ[i,0] += count6LJ(dij_NCl);
+#            NCl_12LJ[i,0] += count12LJ(dij_NCl);
+#        
+#        for j in range(3):
+#            for k in range(12):
+#                dij = np.linalg.norm(the_nh[i][j] - the_cl[i][k]);
+#                HCl_6LJ[i,0] += count6LJ(dij);
+#                HCl_12LJ[i,0] += count12LJ(dij);
+                
+    #For the nearest 3 Cl atoms for H
     for i in range(8):
         for j in range(12):
             dij_NCl = np.linalg.norm(the_n[i] - the_cl[i,j]);
@@ -137,8 +150,10 @@ def findNHBond(name):
             NCl_12LJ[i,0] += count12LJ(dij_NCl);
         
         for j in range(3):
-            for k in range(12):
-                dij = np.linalg.norm(the_nh[i][j] - the_cl[i][k]);
+            tempCl = np.zeros((3,2));
+            op.gothrough(the_nh[i,j],the_cl[i],tempCl);
+            for k in range(3):
+                dij = tempCl[k,1];
                 HCl_6LJ[i,0] += count6LJ(dij);
                 HCl_12LJ[i,0] += count12LJ(dij);
                 
@@ -149,4 +164,5 @@ LJ_terms = np.zeros((200,4)); #6HCl, 12HCl, 6LJ, 12LJ
 for i in range(200):
     name = 'rand_' + str(i+51) + '.xsf';
     LJ_terms[i,:] = findNHBond(name);
-    print(LJ_terms[i,:])
+    print(str(LJ_terms[i,0]) + ' ' + str(LJ_terms[i,1]) + ' ' +str(LJ_terms[i,2]) + ' ' +str(LJ_terms[i,3]))
+
