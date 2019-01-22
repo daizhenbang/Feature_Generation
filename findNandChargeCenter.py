@@ -303,7 +303,12 @@ if __name__ == '__main__':
     OIcouple = np.zeros((200,1));
     moleCouple = np.zeros((200,1));
     NIcouple = np.zeros((200,1));
+    
     NHighSymCouple = np.zeros((200,1));
+    
+    '''One body term'''
+    d2 = np.zeros((200,8));
+    d4 = np.zeros((200,8));
     
     for i in range(200):
         name = 'rand_' + str(i+51) +'.xsf';
@@ -314,17 +319,24 @@ if __name__ == '__main__':
             op.gothrough(original_N[j,:],highSym,tempHighSym);
             dipoleNHighSym[i,j,:] = original_N[j,:] - highSym[int(tempHighSym[0,0])];
         
+        d2[i] = np.square(np.linalg.norm(dipoleNHighSym[i],axis=1));
+        d4[i] = np.square(d2[i]);
+        
+        print(np.sum(d4[i]));
+
+    
 #        aveNN[i] = np.mean(NN[i,:]);
 #        orgo[i], inorgo[i] =  findChargeCenter(name);
-        molecules[i] = findMolecules(name);
+#        molecules[i] = findMolecules(name);
 #        dipoleNI[i] = orignal_N - inorgo[i];
 #        dipoleOI[i] = orgo[i] - inorgo[i];
 #        OIcouple[i] = dipoleCoupling(dipoleOI[i]);
-        moleCouple[i] = dipoleCoupling(molecules[i]);
-        NHighSymCouple[i] = dipoleCoupling(dipoleNHighSym[i]);
+#        moleCouple[i] = dipoleCoupling(molecules[i]);
+#        NHighSymCouple[i] = dipoleCoupling(dipoleNHighSym[i]);
 #        NIcouple[i] = dipoleCoupling(dipoleNI[i]);
         
-        print(moleCouple[i,0])
+#        print(moleCouple[i,0])
+
     
 #    flattenNN = np.zeros((200,24));
 #    flattenNN = NN;
